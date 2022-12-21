@@ -7,7 +7,6 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <span className="logo">CHATA</span>
-
       <nav>
         <span>
           <FaBeer />
@@ -31,11 +30,11 @@ const Navbar = () => {
         </span>
       </nav>
 
-      <nav>
+      <div className="ext-nav">
         <Switch/>
         <FaPhone/>
         <FaBell/>
-      </nav>
+      </div>
       
       <div className="user">
         <div>

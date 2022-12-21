@@ -14,16 +14,10 @@ const MessageBar = () => {
         <Message/>
         <Message/>
         <Message/>
-        <Message/>
-        <Message/>
-        <Message/>
       </Accordion>
 
       <Accordion name="conversations">
       <Message/>
-        <Message/>
-        <Message/>
-        <Message/>
         <Message/>
         <Message/>
         <Message/>
@@ -40,10 +34,6 @@ const MessageBar = () => {
 
       <Accordion name="spam">
       <Message/>
-        <Message/>
-        <Message/>
-        <Message/>
-        <Message/>
         <Message/>
         <Message/>
         <Message/>

@@ -22,8 +22,7 @@ interface ModalProps {
   }
 
  */
-
-const Modal = ({ children, openModal, closeModal }: ModalProps) => {
+const ChatModal = ({openModal, closeModal, children}: ModalProps) => {
   const customStyles = {
     content: {
       top: "50%",
@@ -68,4 +67,4 @@ const Modal = ({ children, openModal, closeModal }: ModalProps) => {
   );
 };
 
-export default Modal;
+export default ChatModal;

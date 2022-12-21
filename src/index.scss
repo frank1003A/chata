@@ -14,16 +14,38 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  --navbar: #fff;
+  --main-color: #3730a3;
+  --sidebar: #555;
+  --mainbgColor: #eee;
+  --panel: #eee;
+  --chatbox: #cbd5e1;
+  --searchbar-color: #0f172a;
+  --searchbar: #cbd5e1;
+  --chatbar_top: #4f46e5;
+  --meshover: #cbd5e1;
+  --onhover_1: rgba(34, 34, 34, 0.425);
+  //--meshover: rgb(24, 22, 22);
+  --main-gradient: linear-gradient(to right, green, #f98046);
+  --font-color_1: #ffffff;
+  --font-color_2: blue;
+  --font-color_3: #555;
+  --box-shadow_4: 0px 4px 20px 0px #cbd5e1;
+  --box-shadow-1: 0 0.5rem 1.5rem rgba(65, 59, 59, 0.1);
+  --box-shadow-2: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  --box-shadow-3: 0 3px 3px 0 rgba(0, 0, 0, 0.14),
+    0 1px 7px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -1px rgba(0, 0, 0, 0.2);
+  --btn-boxshadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
 }
 
 a {
-  font-weight: 500;
-  color: #646cff;
+  font-weight: 700;
   text-decoration: inherit;
+  font-size: medium;
 }
-a:hover {
-  color: #535bf2;
-}
+
 
 body {
   margin: 0;
@@ -62,10 +84,11 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
-  a:hover {
-    color: #747bff;
-  }
   button {
     background-color: #f9f9f9;
   }
 }
+
+/*
+
+*/

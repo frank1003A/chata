@@ -1,13 +1,13 @@
 import React from 'react'
 import Messages from "../components/Messages"
-import Chat from "../components/Chat"
+import Chatbox from "../components/Chatbox"
 import Extras from "../components/Extras"
 
 const all = () => {
   return (
     <div className="grid-layout">
       <Messages/>
-      <Chat/>
+      <Chatbox/>
       <Extras/>
     </div>
   )

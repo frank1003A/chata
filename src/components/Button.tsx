@@ -1,8 +1,12 @@
 import React from 'react'
 
-const Button = ({btnText}:{btnText?: string}) => {
+interface BtnProps {
+  btnText?: string;
+  onClick?: () => void
+}
+const Button = ({btnText, onClick}:BtnProps) => {
   return (
-    <button className="button-71" role="button">{btnText}</button>
+    <button className="button-71" role="button" onClick={onClick}>{btnText}</button>
   )
 }
 

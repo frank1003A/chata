@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import BottomNav from "../components/BottomNav";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
@@ -10,6 +11,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <div className="children">
         {children}
       </div>
+      <BottomNav/>
     </div>
   );
 };

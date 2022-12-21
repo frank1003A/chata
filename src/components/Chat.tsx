@@ -1,35 +1,21 @@
-import React from 'react'
-import {FaCalendar, FaPhone, FaPlane, FaDochub, FaImage, FaLink, FaSmile} from "react-icons/fa";
-import Img from "../assets/me.jpg";
-import Button from './Button';
+import { ReactNode } from "react";
 
-const Chat = () => {
-  return (
-    <div className="chat_bar">
-      <div className="top">
-        <div>
-          <div className="no_badge">
-          <img src={Img} alt="img" />
-          </div>
-          <label>Conversation with Bryan Chidi Ezene</label>
-        </div>
-        <div>
-          <Button btnText='Archive' />
-        </div>
-      </div>
-      <div className="chatbox">
-        <div className="chat-input">
-          <input type="text"/>
-          <div className="controls">
-          <span><FaDochub/></span>
-          <span><FaImage/></span>
-          <span><FaLink/></span>
-          <span id="send-btn"><FaPlane/></span>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+interface ChatProp {
+  content: ReactNode;
+  variant: "outgoing" | "incoming";
 }
+const Chat = ({ content, variant }: ChatProp) => {
+  return (
+    <div
+      className={variant === "incoming" ? "chat-trey left" : "chat-trey right"}
+    >
+      {content && variant === "incoming" ? (
+        <span className="incoming-content-bubble">{content}</span>
+      ) : (
+        <span className="outgoing-content-bubble">{content}</span>
+      )}
+    </div>
+  );
+};
 
-export default Chat
+export default Chat;
