@@ -6,39 +6,43 @@ import { useWindowResize } from "../hooks/useWindowResize";
 const MessageBar = () => {
   let navigate = useNavigate();
   const routes = useLocation();
-  const { width } = useWindowResize();
+  const [mount, setMount] = useState<boolean>(false)
+
+  useEffect(() => {
+    setMount(true)
+  }, [])
+
+  const { width, setWidth } = useWindowResize();
+
+  useEffect(() => {
+    setWidth(window.innerWidth);
+  }, [mount]);
 
   // allow navigation to chatbox page only on mobile view
   const navigateOnSx = () => {
-    if (width > 600 || width === 0) createChat();
+    if (width > 600) createChat();
     else navigate("/chatbox");
   };
 
   // mx chatbox functionality
   const createChat = () => {
-    //ddgdgd
     alert("chat created");
   };
-
-  useEffect(() => {
-    if (routes.pathname.includes("/chatbox") && width === 0) {
-      console.log(routes.pathname)
-    }
-  }, []);
 
   return (
     <div className="message" onClick={navigateOnSx}>
       <span>
-        <div className="photo_badge">
+        <div className="photo_badge" onClick={() => alert("you clicked image")}>
           <div className="badge">
             <img src={Img} alt="profile_picture" />
           </div>
         </div>
         <div className="main">
           <label className="username_text">bryan ezene chidi</label>
-          <label>+234 8022 4435</label>
+          <label className="user_num">080224435</label>
+          <label className="mess_snippet">Hey do you want to join this great group?</label>
         </div>
-        <label className="time">12:30</label>
+        <label className="time">NEW</label>
       </span>
     </div>
   );

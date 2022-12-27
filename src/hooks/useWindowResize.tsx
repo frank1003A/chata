@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 
+/**Mini React hook that returns the height and width of the current window */
 export const useWindowResize = () => {
   const [width, setWidth] = useState<number>(0);
   const [height, setHeight] = useState<number>(0);
@@ -20,5 +21,6 @@ export const useWindowResize = () => {
   return {
     width,
     height,
+    setWidth
   };
 };

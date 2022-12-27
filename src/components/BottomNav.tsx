@@ -1,47 +1,46 @@
-import {useState} from "react";
-import { FaBeer, FaChartBar, FaUser, FaComment, FaKey, FaWrench, FaPhone, FaBell } from "react-icons/fa";
-import Button from "./Button";
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import {
+  FaBeer,
+  FaChartBar,
+  FaUser,
+  FaComment,
+  FaKey,
+} from "react-icons/fa";
 
 const BottomNav = () => {
-    //className={({ isActive }) => (isActive ? "nav-active" : "navlink")}
-
-    return (
+  //className={({ isActive }) => (isActive ? "nav-active" : "a")}
+  //08134934568
+  return (
     <div className="bottom-bar">
       <div className="nav">
-        <NavLink
-          to="/"
-        >
+        <a>
           <FaBeer />
-        </NavLink>
+          Resume
+        </a>
         <div className="badge"></div>
-        <NavLink
-          to="/pinned"
-        >
+        <a>
           <FaChartBar />
-        </NavLink>
+          Statistics
+        </a>
         <div className="badge"></div>
-        <NavLink
-          to="/archived"
-        >
+        <a>
           <FaUser />
-        </NavLink>
+          Contacts
+        </a>
         <div className="badge"></div>
-        <NavLink
-          to="/blocked"
-        >
+        <a>
           <FaComment />
-        </NavLink>
+          Chats
+        </a>
         <div className="badge"></div>
-        <NavLink
-          to="/trash"
-        >
+        <a>
           <FaKey />
-        </NavLink>
+          Settings
+        </a>
         <div className="badge"></div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BottomNav
+export default BottomNav;
