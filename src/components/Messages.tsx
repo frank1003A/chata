@@ -10,9 +10,17 @@ const MessageBar = () => {
       <Search/>
       <Accordion name="Unread">
         <Message/>
+        <div className="divider"/>
         <Message/>
+        <div className="divider"/>
         <Message/>
+        <div className="divider"/>
         <Message/>
+        <div className="divider"/>
+        <Message/>
+        <div className="divider"/>
+        <Message/>
+        <div className="divider"/>
         <Message/>
       </Accordion>
 

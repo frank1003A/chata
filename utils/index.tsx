@@ -63,9 +63,7 @@ export const renderAudioPreview = ({ file, element }: RenderAudArgs) => {
 
   reader.addEventListener("load", () => {
     // result is a base64 string
-    if (reader.result !== null) {
-      audio.src = reader.result as string;
-    }
+      audio.src = URL.createObjectURL(file)
   });
   reader.readAsDataURL(file);
 };

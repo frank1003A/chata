@@ -17,9 +17,7 @@ const CustomInputinputRef = ({ onFileTypesInputChange }: FileTypes) => {
   
   return (
     <span>
-      <span onClick={fileUpload}>
-        <FaLink />
-      </span>
+        <FaLink onClick={fileUpload} />
       <input
         hidden
         id="inputRef"

@@ -16,7 +16,7 @@ const CustomImageFileInput = ({ onFileInputChange }: FileType) => {
   
   return (
     <span>
-        <span onClick={fileUpload}><FaImages/></span>
+      <FaImages onClick={fileUpload}/>
         <input
         hidden
         ref={inputRef}

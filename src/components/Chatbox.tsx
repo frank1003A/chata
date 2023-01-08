@@ -5,6 +5,7 @@ import {
   useState,
   ReactNode,
   ReactFragment,
+  SyntheticEvent,
 } from "react";
 import {
   FaCalendar,
@@ -15,6 +16,8 @@ import {
   FaLink,
   FaSmile,
   FaRegPaperPlane,
+  FaMicrophone,
+  FaMicrophoneAltSlash,
 } from "react-icons/fa";
 import Img from "../assets/me.jpg";
 import Button from "./Button";
@@ -27,6 +30,9 @@ import Input from "./Input";
 import Modal from "./Modal";
 import { renderImagePreview } from "../../utils/index";
 import AudioPlayer from "./AudioPlayer";
+import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
+import RecorderControls from "./RecorderControls";
+import PreviewAttch from "./PreviewAttch";
 
 interface AttachmentType {
   file: File | null;
@@ -39,13 +45,27 @@ interface SimChat {
 }
 
 const Chatbox = () => {
+  const recorderControls = useAudioRecorder();
+  const addAudioElement = (blob: Blob) => {
+    const url = URL.createObjectURL(blob);
+    const audio = document.createElement("audio");
+    audio.src = url;
+    audio.controls = true;
+    document.body.appendChild(audio);
+  };
+
   const [modalIsOpen, setIsOpen] = useState(false);
   const [sendMessage, setSendMessage] = useState(false);
+  const [mount, setMount] = useState(false);
+  const [mouseEnter, setMouseEnter] = useState(false);
+  const [showRec, setShowRec] = useState(false);
 
   const fileInput = useRef<HTMLInputElement | null>(null);
   const ImgElement = useRef<HTMLImageElement | null>(null);
   const vidElement = useRef<HTMLVideoElement | null>(null);
   const audElement = useRef<HTMLAudioElement | null>(null);
+  const chatBoxRef = useRef<HTMLDivElement | null>(null);
+  const hovRef = useRef<HTMLDivElement | null>(null);
 
   function openModal() {
     setIsOpen(true);
@@ -61,58 +81,31 @@ const Chatbox = () => {
       type: "incoming",
       content: "How does it sound for you?",
       attachment: {
-        file: null
+        file: null,
       },
     },
-    { type: "outgoing", content: "It sounds great!!", attachment: { file: null} },
-    { type: "incoming", content: "Great how?", attachment: { file: null} },
-    { type: "outgoing", content: "😶😶😶😶😶", attachment: { file: null} },
+    {
+      type: "outgoing",
+      content: "It sounds great!!",
+      attachment: { file: null },
+    },
+    { type: "incoming", content: "Great how?", attachment: { file: null } },
+    { type: "outgoing", content: "😶😶😶😶😶", attachment: { file: null } },
   ];
 
   const [chats, setChats] = useState<SimChat[]>(initChat);
   const [chat, setChat] = useState<SimChat>({
     type: "outgoing",
-    content: "Say Hi",
-    attachment: { file: null},
+    content: "",
+    attachment: { file: null },
   });
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement>,
+    e: Event | SyntheticEvent<any, Event>,
     type: "incoming" | "outgoing"
   ) => {
-    let cht: SimChat = {};
-    const value = e.target.value;
-    if (typeof value === "string") cht.content = value;
-    cht.type = type;
-    setChat(cht);
-  };
-
-  const handleAttachments = (e: ChangeEvent<HTMLInputElement>) => {
-    const attch = e.target.files;
-    //setChat({attachment: attch})
-    console.log(attch);
-  };
-
-  const onChangeImage = (value: string) => {
-    console.log(value);
-  };
-
-  const handleImage = () => {
-    if (fileInput?.current?.files) {
-      const files = fileInput.current.files;
-
-      if (files.length > 0 && typeof onChangeImage === "function") {
-        const reader = new FileReader();
-
-        reader.addEventListener("load", () => {
-          if (typeof reader.result === "string") {
-            onChangeImage(reader.result);
-          }
-        });
-
-        reader.readAsDataURL(files[0]);
-      }
-    }
+    const { value } = e.currentTarget;
+    setChat({ ...chat, content: value as string, type: type });
   };
 
   const sendChat = () => {
@@ -123,8 +116,8 @@ const Chatbox = () => {
       attachment: chat.attachment,
     };
     chts.push(ct);
-    console.log(chts);
     setChats(chts);
+    setChat(chat);
   };
 
   const onImageFileInputChange = (
@@ -134,36 +127,90 @@ const Chatbox = () => {
     if (event.target.files !== null && event.target.files !== undefined) {
       cht.attachment = {
         file: event.target.files[0],
-        genericType: "image"
-      }
+        genericType: "image",
+      };
     }
     setChat({ ...chat, attachment: cht.attachment });
-    if (cht.attachment && cht.attachment.file !== null && cht.attachment.file !== undefined)
-      renderImagePreview({ file: cht.attachment.file, element: ImgElement });
   };
 
-  const onFilesInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let files = event.target.files;
+  const handleVideoAttch = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    files: FileList
+  ) => {
     let video = vidElement.current as HTMLVideoElement;
-    let audio = audElement.current as HTMLAudioElement;
     let reader = new FileReader();
     try {
-      if (files !== null && files !== undefined) {
-        let file = files[0];
-        reader.addEventListener("load", () => {
-          if (file.type.startsWith("video/")) {
-            video.src = reader.result as string;
-          }
+      let file = files[0];
+      reader.addEventListener("load", () => {
+        video.src = reader.result as string;
+        setChat({
+          ...chat,
+          attachment: {
+            file: file,
+            genericType: "video",
+          },
         });
-        if (file.type.startsWith("audio/")) {
-          audio.src = reader.result as string;
-        }
-        reader.readAsDataURL(files[0]);
-      }
+      });
+      reader.readAsDataURL(files[0]);
     } catch (error) {
       console.error(error);
     }
   };
+
+  const handleAudioAttch = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    files: FileList
+  ) => {
+    let audio = audElement.current as HTMLAudioElement;
+    let reader = new FileReader();
+    try {
+      let file = files[0];
+      reader.addEventListener("load", () => {
+        audio.src = reader.result as string;
+        setChat({
+          ...chat,
+          attachment: {
+            file: file,
+            genericType: "audio",
+          },
+        });
+      });
+      reader.readAsDataURL(files[0]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const onFilesInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let files = event.target.files;
+    if (files !== null && files !== undefined) {
+      let file = files[0];
+      if (file.type.startsWith("video/")) handleVideoAttch(event, files);
+      if (file.type.startsWith("audio/")) handleAudioAttch(event, files);
+    }
+  };
+
+  useEffect(() => {
+    setMount(true);
+  }, []);
+
+  useEffect(() => {
+    let chtbx = chatBoxRef.current as HTMLDivElement;
+    chtbx.scrollTo({
+      behavior: "smooth",
+      top: chtbx.scrollHeight,
+    });
+  }, [chat]);
+
+  useEffect(() => {
+    let mr = hovRef.current as HTMLDivElement;
+    mr.addEventListener("mouseenter", () => {
+      setMouseEnter(true);
+    });
+    mr.addEventListener("mouseleave", () => {
+      setMouseEnter(false);
+    });
+  }, []);
 
   return (
     <div className="chat_bar">
@@ -179,58 +226,85 @@ const Chatbox = () => {
         </div>
       </div>
       <div className="chatbox">
-        <div>
-          {chat.attachment ? (
-            <div className="imgprev_cont">
-              <img ref={ImgElement} id="img_preview" />
-            </div>
-          ) : (
-            ""
-          )}
+        <div ref={chatBoxRef}>
           {chats.map((c) => {
             return (
               <Chat
                 content={c.content}
                 variant={c.type}
-                attachment={c.attachment?.file}
+                attachment={c.attachment}
               />
             );
           })}
-          <span>
-          <video controls ref={vidElement} autoPlay={false} id="chat_video">
-            Sorry, your browser doesn't support embedded videos.
-          </video>
-          </span>
-          <span>
-          <audio controls ref={audElement} autoPlay={false} id="chat_audio">
-          Sorry, your browser doesn't support embedded audios.
-          </audio>
-          </span>
+          <div className={showRec ? "slide_up" : "hidden"}>
+            <AudioRecorder
+              onRecordingComplete={(blob) => addAudioElement(blob)}
+              recorderControls={recorderControls}
+            />
+          </div>
         </div>
       </div>
-      <div className="chat_input">
+      
+      <PreviewAttch chat={chat} variant="audio">
+      <span>
+          <audio controls ref={audElement} autoPlay id="chat_audio">
+            Sorry, your browser doesn't support embedded audios.
+          </audio>
+        </span>
+      </PreviewAttch>
+      <div
+        className={
+          chat.attachment?.file &&
+          chat.attachment?.file.type.startsWith("video/")
+            ? "preview-attachment fade_in_center"
+            : "preview-attachment hidden"
+        }
+      >
+        <video
+              controls
+              ref={vidElement}
+              autoPlay
+              id="chat_video"
+            >
+              Sorry, your browser doesn't support embedded videos.
+            </video>
+      </div>
+      <div className="chat_input" ref={hovRef}>
         <div>
-        <div className="content-input">
-          <div className="no_badge">
-            <img src={Img} alt="img" />
+          <div className="content-input slide_up">
+            <input
+              type="text"
+              placeholder="What's happening?"
+              onChange={(e) => handleChange(e, "outgoing")}
+            />
+            <select
+              name="select_variant"
+              id=""
+              onChange={(e) =>
+                setChat({
+                  ...chat,
+                  type: e.target.value as "incoming" | "outgoing",
+                })
+              }
+            >
+              <option value="outgoing">outgoing</option>
+              <option value="incoming">incoming</option>
+            </select>
+            <div className="btn-ctrls">
+              <RecorderControls showRec={showRec} setShowRec={setShowRec} />
+              <CustomImageFileInput
+                onFileInputChange={onImageFileInputChange}
+              />
+              <CustomFileInput onFileTypesInputChange={onFilesInputChange} />
+            </div>
+            <Button
+              icon={<FaRegPaperPlane />}
+              onClick={() => {
+                sendChat();
+                closeModal();
+              }}
+            />
           </div>
-          <input
-            type="text"
-            placeholder="What's happening?"
-            onChange={(e) => handleChange(e, "outgoing")}
-          />
-          <div className="btn-ctrls">
-          <CustomImageFileInput onFileInputChange={onImageFileInputChange} />
-          <CustomFileInput onFileTypesInputChange={onFilesInputChange} />
-          </div>
-          <Button
-          icon={<FaRegPaperPlane/>}
-            onClick={() => {
-              sendChat();
-              closeModal();
-            }}
-          />
-        </div>
         </div>
       </div>
 
@@ -341,3 +415,44 @@ export default Chatbox;
       }
     }
   }; */
+
+/**<div
+            className={
+              !chat.attachment?.file
+                ? "imgprev_cont hidden"
+                : "imgprev_cont slide_up"
+            }
+          >
+            <label>{chat.content}</label>
+            <img ref={ImgElement} id="img_preview" />
+          </div>
+          <span
+            className={
+              chat.attachment?.file &&
+              chat.attachment?.file?.type.startsWith("video/")
+                ? "preview_trey hidden"
+                : "preview_trey slide_up"
+            }
+          >
+            <label htmlFor="preview_trey">Preview</label>
+            <video
+              hidden
+              controls
+              ref={vidElement}
+              autoPlay={false}
+              id="chat_video"
+            >
+              Sorry, your browser doesn't support embedded videos.
+            </video>
+          </span>
+          <span>
+            <audio
+              hidden
+              controls
+              ref={audElement}
+              autoPlay={false}
+              id="chat_audio"
+            >
+              Sorry, your browser doesn't support embedded audios.
+            </audio>
+          </span> */
